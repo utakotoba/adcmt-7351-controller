@@ -110,9 +110,9 @@ pub enum CurrentRange {
     I200m = 6,
 
     /// 2000mA range
-    I2000 = 7,
+    I2000m = 7,
 
-    /// 20A range
+    /// 10A range
     I10 = 8,
 }
 
