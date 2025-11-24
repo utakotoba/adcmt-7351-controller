@@ -267,8 +267,9 @@ impl Device {
     pub fn function(&mut self) -> Result<FunctionCode> {
         self.write("F?")?;
         let response = self.read()?;
-        let function_code: u8 = response
-            .trim()
+        let trimmed = response.trim();
+        let numeric_part = trimmed.strip_prefix("F").unwrap_or(trimmed);
+        let function_code: u8 = numeric_part
             .parse()
             .map_err(|e| anyhow!("Failed to parse function code '{}': {}", response, e))?;
 
@@ -291,7 +292,9 @@ impl Device {
     pub fn function_ready(&mut self, function_code: FunctionCode) -> Result<bool> {
         self.write(&format!("INH?{}", function_code as u8))?;
         let response = self.read()?;
-        Ok(response == "0")
+        let trimmed = response.trim();
+        let numeric_part = trimmed.strip_prefix("INH?").unwrap_or(trimmed);
+        Ok(numeric_part == "0")
     }
 
     /// Range: get current range of the measurement
@@ -300,8 +303,9 @@ impl Device {
     pub fn range(&mut self) -> Result<RawRange> {
         self.write("R?")?;
         let response = self.read()?;
-        let num: u8 = response
-            .trim()
+        let trimmed = response.trim();
+        let numeric_part = trimmed.strip_prefix("R").unwrap_or(trimmed);
+        let num: u8 = numeric_part
             .parse()
             .map_err(|e| anyhow!("Failed to parse range value '{}': {}", response, e))?;
 
@@ -347,8 +351,9 @@ impl Device {
     pub fn sampling_rate(&mut self) -> Result<SamplingRate> {
         self.write("PR?")?;
         let response = self.read()?;
-        let num: u8 = response
-            .trim()
+        let trimmed = response.trim();
+        let numeric_part = trimmed.strip_prefix("PR").unwrap_or(trimmed);
+        let num: u8 = numeric_part
             .parse()
             .map_err(|e| anyhow!("Failed to parse sampling rate value '{}': {}", response, e))?;
 
@@ -369,7 +374,9 @@ impl Device {
     pub fn number_of_display_digits(&mut self) -> Result<NumberOfDisplayDigits> {
         self.write("RE?")?;
         let response = self.read()?;
-        let num: u8 = response.trim().parse().map_err(|e| {
+        let trimmed = response.trim();
+        let numeric_part = trimmed.strip_prefix("RE").unwrap_or(trimmed);
+        let num: u8 = numeric_part.parse().map_err(|e| {
             anyhow!(
                 "Failed to parse number of display digits value '{}': {}",
                 response,
@@ -398,8 +405,9 @@ impl Device {
     pub fn auto_zero(&mut self) -> Result<AutoZero> {
         self.write("AZ?")?;
         let response = self.read()?;
-        let num: u8 = response
-            .trim()
+        let trimmed = response.trim();
+        let numeric_part = trimmed.strip_prefix("AZ").unwrap_or(trimmed);
+        let num: u8 = numeric_part
             .parse()
             .map_err(|e| anyhow!("Failed to parse auto zero value '{}': {}", response, e))?;
 
