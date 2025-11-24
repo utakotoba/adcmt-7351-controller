@@ -7,7 +7,6 @@ use crate::protocol::MAX_CMD_LEN;
 /// Packet encoder and decoder
 pub struct Packet;
 
-#[allow(dead_code)]
 impl Packet {
     /// Encode a write request into a packet
     pub fn encode_write(command_str: &str, sequence: u8) -> Result<Vec<u8>> {

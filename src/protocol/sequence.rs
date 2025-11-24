@@ -7,7 +7,6 @@ pub struct SequenceCounter {
     counter: Cell<u8>,
 }
 
-#[allow(dead_code)]
 impl SequenceCounter {
     /// Create a new sequence counter
     pub fn new() -> Self {
@@ -34,6 +33,7 @@ impl SequenceCounter {
     }
 
     /// Increment counter
+    #[allow(unused)]
     pub fn increment(&self) {
         let current = self.counter.get();
         let next = if current == 0 {

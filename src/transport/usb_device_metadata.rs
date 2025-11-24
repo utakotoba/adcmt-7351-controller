@@ -3,7 +3,6 @@
 use anyhow::{Context, Ok, Result};
 use rusb::{Context as RUsbContext, Device, DeviceDescriptor};
 
-#[allow(unused)]
 #[derive(Debug, Clone)]
 pub struct UsbDeviceMetadata {
     pub device: Device<RUsbContext>,
@@ -12,7 +11,6 @@ pub struct UsbDeviceMetadata {
     pub serial_number: Option<String>,
 }
 
-#[allow(dead_code)]
 impl UsbDeviceMetadata {
     /// Populate metadata of a USB device
     pub fn from_device(

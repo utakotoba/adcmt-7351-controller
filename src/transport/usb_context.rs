@@ -6,12 +6,10 @@ use rusb::{Context as RUsbContext, UsbContext as RUsbContextTrait};
 use crate::transport::{PID, VID, usb_device_metadata::UsbDeviceMetadata};
 
 /// USB context wrapper around rusb
-#[allow(unused)]
 pub struct UsbContext {
     ctx: RUsbContext,
 }
 
-#[allow(dead_code)]
 impl UsbContext {
     /// Create a new USB host context
     pub fn new() -> Result<Self> {
@@ -20,6 +18,7 @@ impl UsbContext {
     }
 
     /// Get the internal RUSB context
+    #[allow(unused)]
     pub fn get_rusb_ctx(&self) -> &RUsbContext {
         &self.ctx
     }

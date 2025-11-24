@@ -8,7 +8,6 @@ use rusb::{Context as RUsbContext, Device, DeviceHandle, TransferType};
 use crate::transport::usb_device_metadata::UsbDeviceMetadata;
 
 /// USB endpoints
-#[allow(unused)]
 struct UsbEndpoints {
     read_addr: u8,
     read_type: u8,
@@ -17,14 +16,12 @@ struct UsbEndpoints {
 }
 
 /// USB device handle with endpoints
-#[allow(unused)]
 pub struct UsbDevice {
     handle: DeviceHandle<RUsbContext>,
     endpoints: UsbEndpoints,
     timeout: Duration,
 }
 
-#[allow(dead_code)]
 impl UsbDevice {
     /// Open a USB device based on metadata
     pub fn open(metadata: &UsbDeviceMetadata) -> Result<Self> {
@@ -114,6 +111,7 @@ impl UsbDevice {
     }
 
     /// Read status byte via control transfer
+    #[allow(unused)]
     pub fn read_status(&self) -> Result<u8> {
         let mut status = [0u8; 1];
         let transferred = self

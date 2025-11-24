@@ -14,7 +14,6 @@ pub struct Device {
     sequence: SequenceCounter,
 }
 
-#[allow(dead_code)]
 impl Device {
     /// Open a multimeter device using device metadata
     pub fn open(metadata: &UsbDeviceMetadata) -> Result<Self> {

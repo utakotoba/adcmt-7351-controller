@@ -9,7 +9,6 @@ pub struct DeviceManager {
     ctx: UsbContext,
 }
 
-#[allow(dead_code)]
 impl DeviceManager {
     /// Create a new device manager
     pub fn new() -> Result<Self> {
