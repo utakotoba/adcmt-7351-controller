@@ -5,7 +5,7 @@ use num_traits::FromPrimitive;
 use crate::Device;
 
 /// Function code mapping enum
-#[derive(FromPrimitive)]
+#[derive(Debug, FromPrimitive)]
 pub enum FunctionCode {
     /// DC voltage measurement (DCV) mode
     DCV = 1,
@@ -44,7 +44,7 @@ pub enum FunctionCode {
 /// Raw range mapping enum
 ///
 /// Used to set the range of the measurement based on the code in manual.
-#[derive(FromPrimitive)]
+#[derive(Debug, FromPrimitive)]
 pub enum RawRange {
     AUTO = 0,
     R3 = 3,
@@ -57,6 +57,7 @@ pub enum RawRange {
 }
 
 /// DC voltage range mapping enum
+#[derive(Debug, FromPrimitive)]
 pub enum VoltageDCRange {
     /// Auto range
     AUTO = 0,
@@ -78,6 +79,7 @@ pub enum VoltageDCRange {
 }
 
 /// AC voltage range mapping enum
+#[derive(Debug, FromPrimitive)]
 pub enum VoltageACRange {
     /// Auto range
     AUTO = 0,
@@ -99,6 +101,7 @@ pub enum VoltageACRange {
 }
 
 /// Current range mapping enum
+#[derive(Debug, FromPrimitive)]
 pub enum CurrentRange {
     /// Auto range
     AUTO = 0,
@@ -114,6 +117,7 @@ pub enum CurrentRange {
 }
 
 /// Resistance range mapping enum
+#[derive(Debug, FromPrimitive)]
 pub enum ResistanceRange {
     /// Auto range
     AUTO = 0,
@@ -141,6 +145,7 @@ pub enum ResistanceRange {
 }
 
 /// Low power resistance range mapping enum
+#[derive(Debug, FromPrimitive)]
 pub enum ResistanceLowPowerRange {
     /// Auto range
     AUTO = 0,
@@ -165,6 +170,7 @@ pub enum ResistanceLowPowerRange {
 }
 
 /// Frequency range mapping enum
+#[derive(Debug, FromPrimitive)]
 pub enum FrequencyVoltageRange {
     /// 200mV range
     V200m = 3,
@@ -183,6 +189,7 @@ pub enum FrequencyVoltageRange {
 }
 
 /// Mode and range shorthand mapping enum
+#[derive(Debug)]
 pub enum ShortHand {
     /// DC voltage measurement (DCV) mode
     DCV(VoltageDCRange),
@@ -219,7 +226,7 @@ pub enum ShortHand {
 }
 
 /// Sampling rate mapping enum
-#[derive(FromPrimitive)]
+#[derive(Debug, FromPrimitive)]
 pub enum SamplingRate {
     /// Fast sampling rate
     FAST = 1,
@@ -235,7 +242,7 @@ pub enum SamplingRate {
 }
 
 /// Number of display digits mapping enum
-#[derive(FromPrimitive)]
+#[derive(Debug, FromPrimitive)]
 pub enum NumberOfDisplayDigits {
     /// 3 1/2 digits
     ThreeAndAHalf = 3,
@@ -248,7 +255,7 @@ pub enum NumberOfDisplayDigits {
 }
 
 /// Auto zero mapping enum
-#[derive(FromPrimitive)]
+#[derive(Debug, FromPrimitive)]
 pub enum AutoZero {
     /// Manual auto zero
     Disable = 0,
