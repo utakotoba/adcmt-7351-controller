@@ -1,2 +1,8 @@
 # rust toolchain
 /target
+
+# local references for development
+/references
+
+# os-related
+.DS_Store
