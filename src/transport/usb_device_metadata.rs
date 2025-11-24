@@ -13,7 +13,10 @@ pub struct UsbDeviceMetadata {
 #[allow(dead_code)]
 impl UsbDeviceMetadata {
     /// Populate metadata of a USB device
-    fn from_device(device: &Device<RUsbContext>, descriptor: &DeviceDescriptor) -> Result<Self> {
+    pub fn from_device(
+        device: &Device<RUsbContext>,
+        descriptor: &DeviceDescriptor,
+    ) -> Result<Self> {
         let handle = device
             .open()
             .context("Failed to open device for descriptor read")?;
