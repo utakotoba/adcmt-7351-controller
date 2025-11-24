@@ -5,4 +5,4 @@ mod operations;
 
 // Re-exports
 pub use manager::DeviceManager;
-pub use operations::Device;
+pub use operations::*;

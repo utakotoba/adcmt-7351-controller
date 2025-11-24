@@ -19,6 +19,10 @@ fn main() -> Result<()> {
     device.write("*RST")?;
     println!("Sent *RST command");
 
+    // Receive response from the device
+    let response = device.read()?;
+    println!("Received response: {}", response);
+
     println!("Done!");
     Ok(())
 }

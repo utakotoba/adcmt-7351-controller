@@ -8,5 +8,5 @@ mod protocol;
 mod transport;
 
 // Re-exports
-pub use device::{Device, DeviceManager};
+pub use device::*;
 pub use transport::UsbDeviceMetadata;
