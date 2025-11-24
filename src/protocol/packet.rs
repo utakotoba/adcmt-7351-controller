@@ -1,3 +1,5 @@
+//! Packet encoding and decoding
+
 use anyhow::{Ok, Result};
 
 use crate::protocol::MAX_CMD_LEN;

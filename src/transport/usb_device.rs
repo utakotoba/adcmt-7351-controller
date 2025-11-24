@@ -1,3 +1,5 @@
+//! Low-level fine-grained control of a USB device
+
 use std::time::Duration;
 
 use anyhow::{Context, Ok, Result, anyhow};

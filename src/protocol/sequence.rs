@@ -1,3 +1,5 @@
+//! Sequence number management for packet headers
+
 use std::cell::Cell;
 
 /// Sequence counter for packet headers (wrapping around 255)

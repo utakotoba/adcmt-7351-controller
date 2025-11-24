@@ -1,3 +1,5 @@
+//! Metadata represents a USB device
+
 use anyhow::{Context, Ok, Result};
 use rusb::{Context as RUsbContext, Device, DeviceDescriptor};
 

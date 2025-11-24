@@ -1,3 +1,5 @@
+//! Protocol layer for packet encoding and decoding
+
 mod packet;
 mod sequence;
 
