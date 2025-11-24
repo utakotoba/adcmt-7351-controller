@@ -9,3 +9,8 @@ pub const VID: u16 = 0x1334;
 
 /// ADCMT 7351A USB Product ID
 pub const PID: u16 = 0x0203;
+
+// Re-exports
+pub use usb_context::UsbContext;
+pub use usb_device::UsbDevice;
+pub use usb_device_metadata::UsbDeviceMetadata;

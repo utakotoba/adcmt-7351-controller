@@ -4,7 +4,7 @@ use anyhow::{Context, Ok, Result};
 use rusb::{Context as RUsbContext, Device, DeviceDescriptor};
 
 #[allow(unused)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UsbDeviceMetadata {
     pub device: Device<RUsbContext>,
     pub vendor_id: u16,
