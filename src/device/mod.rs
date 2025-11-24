@@ -1,3 +1,5 @@
+//! Device layer for instrument communication
+
 mod manager;
 mod operations;
 
