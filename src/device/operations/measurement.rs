@@ -5,7 +5,7 @@ use num_traits::FromPrimitive;
 use crate::Device;
 
 /// Function code mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum FunctionCode {
     /// DC voltage measurement (DCV) mode
     DCV = 1,
@@ -44,7 +44,7 @@ pub enum FunctionCode {
 /// Raw range mapping enum
 ///
 /// Used to set the range of the measurement based on the code in manual.
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum RawRange {
     AUTO = 0,
     R3 = 3,
@@ -57,7 +57,7 @@ pub enum RawRange {
 }
 
 /// DC voltage range mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum VoltageDCRange {
     /// Auto range
     AUTO = 0,
@@ -79,7 +79,7 @@ pub enum VoltageDCRange {
 }
 
 /// AC voltage range mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum VoltageACRange {
     /// Auto range
     AUTO = 0,
@@ -101,7 +101,7 @@ pub enum VoltageACRange {
 }
 
 /// Current range mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum CurrentRange {
     /// Auto range
     AUTO = 0,
@@ -117,7 +117,7 @@ pub enum CurrentRange {
 }
 
 /// Resistance range mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum ResistanceRange {
     /// Auto range
     AUTO = 0,
@@ -145,7 +145,7 @@ pub enum ResistanceRange {
 }
 
 /// Low power resistance range mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum ResistanceLowPowerRange {
     /// Auto range
     AUTO = 0,
@@ -170,7 +170,7 @@ pub enum ResistanceLowPowerRange {
 }
 
 /// Frequency range mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum FrequencyVoltageRange {
     /// 200mV range
     V200m = 3,
@@ -226,7 +226,7 @@ pub enum ShortHand {
 }
 
 /// Sampling rate mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum SamplingRate {
     /// Fast sampling rate
     FAST = 1,
@@ -242,7 +242,7 @@ pub enum SamplingRate {
 }
 
 /// Number of display digits mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum NumberOfDisplayDigits {
     /// 3 1/2 digits
     ThreeAndAHalf = 3,
@@ -255,7 +255,7 @@ pub enum NumberOfDisplayDigits {
 }
 
 /// Auto zero mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum AutoZero {
     /// Manual auto zero
     Disable = 0,
@@ -288,7 +288,20 @@ impl Device {
     ///
     /// ADC command: `F<function_code>`
     pub fn function_set(&mut self, function_code: FunctionCode) -> Result<()> {
-        self.write(&format!("F{}", function_code as u8))
+        // Check if the function is ready
+        if !self.function_ready(function_code.clone())? {
+            return Err(anyhow!("Function is not ready"));
+        }
+
+        // Set the function
+        self.write(&format!("F{}", function_code.clone() as u8))?;
+
+        // Verify the function
+        if self.function()? != function_code {
+            return Err(anyhow!("Failed to set function"));
+        }
+
+        Ok(())
     }
 
     /// Function: check if the given function code is ready
@@ -323,7 +336,15 @@ impl Device {
     ///
     /// ADC command: `R<raw_range>`
     pub fn range_set(&mut self, raw_range: RawRange) -> Result<()> {
-        self.write(&format!("R{}", raw_range as u8))
+        // Set the range
+        self.write(&format!("R{}", raw_range.clone() as u8))?;
+
+        // Verify the range
+        if self.range()? != raw_range {
+            return Err(anyhow!("Failed to set range"));
+        }
+
+        Ok(())
     }
 
     /// Range: fix automatic range by switch to manual range
@@ -372,7 +393,15 @@ impl Device {
     ///
     /// ADC command: `PR<sampling_rate>`
     pub fn sampling_rate_set(&mut self, sampling_rate: SamplingRate) -> Result<()> {
-        self.write(&format!("PR{}", sampling_rate as u8))
+        // Set the sampling rate
+        self.write(&format!("PR{}", sampling_rate.clone() as u8))?;
+
+        // Verify the sampling rate
+        if self.sampling_rate()? != sampling_rate {
+            return Err(anyhow!("Failed to set sampling rate"));
+        }
+
+        Ok(())
     }
 
     /// Number of Display Digits: get current number of display digits
@@ -403,7 +432,15 @@ impl Device {
         &mut self,
         number_of_display_digits: NumberOfDisplayDigits,
     ) -> Result<()> {
-        self.write(&format!("RE{}", number_of_display_digits as u8))
+        // Set the number of display digits
+        self.write(&format!("RE{}", number_of_display_digits.clone() as u8))?;
+
+        // Verify the number of display digits
+        if self.number_of_display_digits()? != number_of_display_digits {
+            return Err(anyhow!("Failed to set number of display digits"));
+        }
+
+        Ok(())
     }
 
     /// Auto Zero: get current auto zero setting
@@ -426,7 +463,15 @@ impl Device {
     ///
     /// ADC command: `AZ<auto_zero>`
     pub fn auto_zero_set(&mut self, auto_zero: AutoZero) -> Result<()> {
-        self.write(&format!("AZ{}", auto_zero as u8))
+        // Set the auto zero
+        self.write(&format!("AZ{}", auto_zero.clone() as u8))?;
+
+        // Verify the auto zero
+        if self.auto_zero()? != auto_zero {
+            return Err(anyhow!("Failed to set auto zero"));
+        }
+
+        Ok(())
     }
 
     /// Continuity threshold constant: get current continuity threshold constant
@@ -444,7 +489,15 @@ impl Device {
         &mut self,
         continuity_threshold_constant: u16,
     ) -> Result<()> {
-        self.write(&format!("KOM{}", continuity_threshold_constant))
+        // Set the continuity threshold constant
+        self.write(&format!("KOM{}", continuity_threshold_constant))?;
+
+        // Verify the continuity threshold constant
+        if self.continuity_threshold_constant()? != format!("{}", continuity_threshold_constant) {
+            return Err(anyhow!("Failed to set continuity threshold constant"));
+        }
+
+        Ok(())
     }
 
     // TODO: measurement data memory related commands

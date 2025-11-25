@@ -5,7 +5,7 @@ use num_traits::FromPrimitive;
 use crate::Device;
 
 /// Trigger source mapping enum
-#[derive(Debug, FromPrimitive)]
+#[derive(Debug, FromPrimitive, Clone, PartialEq)]
 pub enum TriggerSource {
     /// Immediate trigger
     IMMEDIATE = 0,
@@ -58,14 +58,28 @@ impl Device {
     ///
     /// ADC command: `INIC1`
     pub fn continuously_measure_enable(&mut self) -> Result<()> {
-        self.write("INIC1")
+        self.write("INIC1")?;
+
+        // Verify the continuously measure
+        if !self.continuously_measure()? {
+            return Err(anyhow!("Failed to enable continuously measure"));
+        }
+
+        Ok(())
     }
 
     /// Continuously measure: disable continuous measurement
     ///
     /// ADC command: `INIC0`
     pub fn continuously_measure_disable(&mut self) -> Result<()> {
-        self.write("INIC0")
+        self.write("INIC0")?;
+
+        // Verify the continuously measure
+        if self.continuously_measure()? {
+            return Err(anyhow!("Failed to disable continuously measure"));
+        }
+
+        Ok(())
     }
 
     /// Trigger source: get current trigger source
@@ -88,7 +102,15 @@ impl Device {
     ///
     /// ADC command: `TRS<trigger_source>`
     pub fn trigger_source_set(&mut self, trigger_source: TriggerSource) -> Result<()> {
-        self.write(&format!("TRS{}", trigger_source as u8))
+        // Set the trigger source
+        self.write(&format!("TRS{}", trigger_source.clone() as u8))?;
+
+        // Verify the trigger source
+        if self.trigger_source()? != trigger_source {
+            return Err(anyhow!("Failed to set trigger source"));
+        }
+
+        Ok(())
     }
 
     /// Trigger delay: get current trigger delay
@@ -103,7 +125,15 @@ impl Device {
     ///
     /// ADC command: `TRD<trigger_delay>`
     pub fn trigger_delay_set(&mut self, trigger_delay: u16) -> Result<()> {
-        self.write(&format!("TRD{}", trigger_delay))
+        // Set the trigger delay
+        self.write(&format!("TRD{}", trigger_delay))?;
+
+        // Verify the trigger delay
+        if self.trigger_delay()? != format!("{}", trigger_delay) {
+            return Err(anyhow!("Failed to set trigger delay"));
+        }
+
+        Ok(())
     }
 
     /// Sampling count: get current sampling count
@@ -124,6 +154,14 @@ impl Device {
     ///
     /// ADC command: `SPN<sampling_count>`
     pub fn sampling_count_set(&mut self, sampling_count: u16) -> Result<()> {
-        self.write(&format!("SPN{}", sampling_count))
+        // Set the sampling count
+        self.write(&format!("SPN{}", sampling_count))?;
+
+        // Verify the sampling count
+        if self.sampling_count()? != sampling_count {
+            return Err(anyhow!("Failed to set sampling count"));
+        }
+
+        Ok(())
     }
 }
