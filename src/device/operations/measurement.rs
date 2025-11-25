@@ -65,8 +65,8 @@ pub enum VoltageDCRange {
     /// 200mV range
     V200m = 3,
 
-    /// 2V range
-    V2 = 4,
+    /// 2000mV range
+    V2000m = 4,
 
     /// 20V range
     V20 = 5,
@@ -87,8 +87,8 @@ pub enum VoltageACRange {
     /// 200mV range
     V200m = 3,
 
-    /// 2V range
-    V2 = 4,
+    /// 2000mV range
+    V2000m = 4,
 
     /// 20V range
     V20 = 5,
