@@ -354,23 +354,160 @@ impl Device {
         self.write("RX")
     }
 
+    /// ShortHand: get current mode and range of the measurement
+    ///
+    /// Reads the current function code and range, then constructs a ShortHand enum.
+    pub fn shorthand(&mut self) -> Result<ShortHand> {
+        let function = self.function()?;
+        let raw_range = self.range()?;
+        let range_value = raw_range as u8;
+
+        match function {
+            FunctionCode::DCV => {
+                let range = VoltageDCRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!("Failed to convert range {} to VoltageDCRange", range_value)
+                })?;
+                Ok(ShortHand::DCV(range))
+            }
+            FunctionCode::ACV => {
+                let range = VoltageACRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!("Failed to convert range {} to VoltageACRange", range_value)
+                })?;
+                Ok(ShortHand::ACV(range))
+            }
+            FunctionCode::Resistance => {
+                let range = ResistanceRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!("Failed to convert range {} to ResistanceRange", range_value)
+                })?;
+                Ok(ShortHand::Resistance(range))
+            }
+            FunctionCode::DCI => {
+                let range = CurrentRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!("Failed to convert range {} to CurrentRange", range_value)
+                })?;
+                Ok(ShortHand::DCI(range))
+            }
+            FunctionCode::ACI => {
+                let range = CurrentRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!("Failed to convert range {} to CurrentRange", range_value)
+                })?;
+                Ok(ShortHand::ACI(range))
+            }
+            FunctionCode::ACVCoupling => {
+                let range = VoltageACRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!("Failed to convert range {} to VoltageACRange", range_value)
+                })?;
+                Ok(ShortHand::ACVCoupling(range))
+            }
+            FunctionCode::ACICoupling => {
+                let range = CurrentRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!("Failed to convert range {} to CurrentRange", range_value)
+                })?;
+                Ok(ShortHand::ACICoupling(range))
+            }
+            FunctionCode::Diode => Ok(ShortHand::Diode),
+            FunctionCode::ResistanceLowPower => {
+                let range = ResistanceLowPowerRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!(
+                        "Failed to convert range {} to ResistanceLowPowerRange",
+                        range_value
+                    )
+                })?;
+                Ok(ShortHand::ResistanceLowPower(range))
+            }
+            FunctionCode::Continuity => Ok(ShortHand::Continuity),
+            FunctionCode::Frequency => {
+                let range = FrequencyVoltageRange::from_u8(range_value).ok_or_else(|| {
+                    anyhow!(
+                        "Failed to convert range {} to FrequencyVoltageRange",
+                        range_value
+                    )
+                })?;
+                Ok(ShortHand::Frequency(range))
+            }
+        }
+    }
+
     /// ShortHand: set the mode and range of the measurement
     ///
     /// ADC command: `F<function_code>,R<range_code>`
-    pub fn shorthand(&mut self, shorthand: ShortHand) -> Result<()> {
-        match shorthand {
-            ShortHand::DCV(range) => self.write(&format!("F1,R{}", range as u8)),
-            ShortHand::ACV(range) => self.write(&format!("F2,R{}", range as u8)),
-            ShortHand::Resistance(range) => self.write(&format!("F3,R{}", range as u8)),
-            ShortHand::DCI(range) => self.write(&format!("F5,R{}", range as u8)),
-            ShortHand::ACI(range) => self.write(&format!("F6,R{}", range as u8)),
-            ShortHand::ACVCoupling(range) => self.write(&format!("F7,R{}", range as u8)),
-            ShortHand::ACICoupling(range) => self.write(&format!("F8,R{}", range as u8)),
-            ShortHand::Diode => self.write("F13"),
-            ShortHand::ResistanceLowPower(range) => self.write(&format!("F20,R{}", range as u8)),
-            ShortHand::Continuity => self.write("F22"),
-            ShortHand::Frequency(range) => self.write(&format!("F50,R{}", range as u8)),
+    pub fn shorthand_set(&mut self, shorthand: ShortHand) -> Result<()> {
+        let (expected_function, expected_range_opt) = match shorthand {
+            ShortHand::DCV(range) => {
+                self.write(&format!("F1,R{}", range.clone() as u8))?;
+                (FunctionCode::DCV, Some(range as u8))
+            }
+            ShortHand::ACV(range) => {
+                self.write(&format!("F2,R{}", range.clone() as u8))?;
+                (FunctionCode::ACV, Some(range as u8))
+            }
+            ShortHand::Resistance(range) => {
+                self.write(&format!("F3,R{}", range.clone() as u8))?;
+                (FunctionCode::Resistance, Some(range as u8))
+            }
+            ShortHand::DCI(range) => {
+                self.write(&format!("F5,R{}", range.clone() as u8))?;
+                (FunctionCode::DCI, Some(range as u8))
+            }
+            ShortHand::ACI(range) => {
+                self.write(&format!("F6,R{}", range.clone() as u8))?;
+                (FunctionCode::ACI, Some(range as u8))
+            }
+            ShortHand::ACVCoupling(range) => {
+                self.write(&format!("F7,R{}", range.clone() as u8))?;
+                (FunctionCode::ACVCoupling, Some(range as u8))
+            }
+            ShortHand::ACICoupling(range) => {
+                self.write(&format!("F8,R{}", range.clone() as u8))?;
+                (FunctionCode::ACICoupling, Some(range as u8))
+            }
+            ShortHand::Diode => {
+                self.write("F13")?;
+                (FunctionCode::Diode, None)
+            }
+            ShortHand::ResistanceLowPower(range) => {
+                self.write(&format!("F20,R{}", range.clone() as u8))?;
+                (FunctionCode::ResistanceLowPower, Some(range as u8))
+            }
+            ShortHand::Continuity => {
+                self.write("F22")?;
+                (FunctionCode::Continuity, None)
+            }
+            ShortHand::Frequency(range) => {
+                self.write(&format!("F50,R{}", range.clone() as u8))?;
+                (FunctionCode::Frequency, Some(range as u8))
+            }
+        };
+
+        // Verify the function code
+        let actual_function = self.function()?;
+        if actual_function != expected_function {
+            return Err(anyhow!(
+                "Failed to set function: expected {:?}, got {:?}",
+                expected_function,
+                actual_function
+            ));
         }
+
+        // Verify the range if it was set
+        if let Some(expected_range_value) = expected_range_opt {
+            let actual_range = self.range()?;
+            let expected_range = RawRange::from_u8(expected_range_value).ok_or_else(|| {
+                anyhow!(
+                    "Failed to convert range value {} to RawRange",
+                    expected_range_value
+                )
+            })?;
+            if actual_range != expected_range {
+                return Err(anyhow!(
+                    "Failed to set range: expected {:?}, got {:?}",
+                    expected_range,
+                    actual_range
+                ));
+            }
+        }
+
+        Ok(())
     }
 
     /// Sampling Rate: get current sampling rate
